@@ -1,15 +1,16 @@
-# тестируем класс MyTestResultParser
 from ParserModule import MyTestResultParser
+from DateCheckerFile import DateChecker
 
+# тестируем класс MyTestResultParser
 
 # прерка корректности работы проверки формата файла для парсинга!!!
-testObj = MyTestResultParser('ksdhfkjsdlfj.txt')
+testObj = MyTestResultParser('ksdhfkjsdlfj.txt', 'ksdhfkjsdlfj.txt')
 
 print(testObj.check_format()[0])
 print(testObj.check_format()[1])
 
 # проверяем класс проверки дат из строки в русском формате (ДД.ММ.ГГГГ)!!!
-from DateCheckerFile import DateChecker
+
 
 test_dates_lst = [
     'kdfjngkds',
@@ -26,3 +27,12 @@ for date in test_dates_lst:
 
 # пробуем подгружать файл с результатами тестирования из MyTest!!!
 file_full_path = r'D:\ФБУЗ_ЦГиЭКО\ТЕСТЫ_ОГВиА\MyTestSavePythonApplication\файл для парсинга\MyTestStudent_Result 19.01.2022.txt'
+
+print(file_full_path)
+testObjRealPath = MyTestResultParser(file_full_path, file_full_path)
+print(testObjRealPath.check_format()[0])
+print(testObjRealPath.check_format()[1])
+# проверяем правильность считывания содержимого файла!!!
+file_cont = testObjRealPath.read_file()
+#print(file_cont)
+print('\n', testObjRealPath.get_all_attributes())
