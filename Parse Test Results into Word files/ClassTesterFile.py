@@ -53,7 +53,8 @@ slice_results = testObjRealPath.content_slicer()
 #print(f'\n\nСодержимое оставшегося текста, в котором не было найдено результатов тестирования: \n{slice_results[1]}')
 print(slice_results[0])
 # сохраняем результаты тестирования в виде эксель-файла!
-df_temp = DataFrame(slice_results[0]).T # транспонированный ДФ!!!
+#df_temp = DataFrame(slice_results[0]).T # транспонированный ДФ!!!
+df_temp = DataFrame(slice_results[0])
 print(df_temp.head())
 excel_filename = 'test_output_MyTestProgramSliced.xlsx'
 df_temp.to_excel(excel_filename, index=False)

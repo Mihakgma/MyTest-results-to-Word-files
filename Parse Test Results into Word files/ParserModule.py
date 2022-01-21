@@ -1,6 +1,9 @@
 import os.path
 from re import search as re_search
 
+from ExtractorFile import ResultsExtractor
+
+
 
 class MyTestResultParser():
     def __init__(self,
@@ -146,7 +149,10 @@ class MyTestResultParser():
             found = ''
             try:
                 found = m.group(1)[:-1]
-                results_text_dict[str(counter)+' результат'] = [found]
+                start_mark_censor = 'Маска ответов'
+                finish_mark_censor = '\nВремя начала:'
+                censored_text = ResultsExtractor(found).censor_text(start_mark_censor, finish_mark_censor)
+                results_text_dict[str(counter)+' результат'] = [found, censored_text]
                 file_content = file_content.replace(found, '')
             except:
                 print(f'Текст по шаблону <{full_mask}> - не найден!!!')
@@ -154,4 +160,3 @@ class MyTestResultParser():
             #print(found)
 
         return results_text_dict, file_content
-
