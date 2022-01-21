@@ -85,6 +85,18 @@ class DateChecker():
                 day_num = date_splitted[0]
                 month_num = date_splitted[1]
                 year_num = date_splitted[2]
+            elif date_format == 'long':
+                full_date_splitted = date_to_check.split(' ')
+                date_first_part = full_date_splitted[0]
+                date_second_part = full_date_splitted[1]
+                date_splitted = date_first_part.split('.')
+                day_num = date_splitted[0]
+                month_num = date_splitted[1]
+                year_num = date_splitted[2]
+                time_splitted = date_second_part.split(':')
+                hours_num = int(time_splitted[0])
+                minutes_num = int(time_splitted[1])
+                seconds_num = int(time_splitted[2])
 
             # пробуем преобразовать отдельные части даты в цифры
             day_num = int(day_num)

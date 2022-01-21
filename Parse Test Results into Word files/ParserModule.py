@@ -1,4 +1,6 @@
 import os.path
+from re import search as re_search
+
 
 class MyTestResultParser():
     def __init__(self,
@@ -36,9 +38,26 @@ class MyTestResultParser():
     def get_file_exists(self):
         return self.__file_exists
 
+    def get_all_attributes(self):
+        """"
+        Возвращает все атрибуты объекта класса MyTestResultParser
+        в виде словаря, где ключом является строка с именем переменной,
+        а значением - ее значение
+        """
+        attribute_dict = {}
+
+        filename = self.get_filename()
+        attribute_dict['filename'] = filename
+        full_path = self.get_full_path()
+        attribute_dict['full_path'] = full_path
+        file_exists = self.get_file_exists()
+        attribute_dict['file_exists'] = file_exists
+
+        return attribute_dict
 
 
-    # рабочие методы
+
+    # рабочие методы - а точнее, их конвейр...
     def check_file_exists(self):
         """"
         Проверить - существует ли файл?
@@ -90,19 +109,49 @@ class MyTestResultParser():
             print('Проверьте путь к файлу!')
         return file_content
 
-    def get_all_attributes(self):
-        """"
-        Возвращает все атрибуты объекта класса MyTestResultParser
-        в виде словаря, где ключом является строка с именем переменной,
-        а значением - ее значение
+    def content_slicer(self, regime='auto', str_parse = ''):
         """
-        attribute_dict = {}
+        Данный метод 'разрезает' строку с содержимым
+        файла результатов тестирования из программы My Test
+        И извлекает только нужную информацию.
+        Возвращает кортеж:
+        1) словарь, где ключи дата и время тестирования (ДД.ММ.ГГГГ ЧЧ:ММ:СС)
+        + ФИО тестируемого в виде строки.
+        Значения - строки с результатом от верхней границы до нижней
+        Все, что отделено черточками...
+        2) остаточный текст, в котором не найден искомый шаблон
+        """
+        if regime =='auto':
+            file_content = self.read_file()
+        elif regime == 'manual':
+            file_content = str_parse[:]
 
-        filename = self.get_filename()
-        attribute_dict['filename'] = filename
-        full_path = self.get_full_path()
-        attribute_dict['full_path'] = full_path
-        file_exists = self.get_file_exists()
-        attribute_dict['file_exists'] = file_exists
+        #print(file_content)
 
-        return attribute_dict
+        full_mask_end = r'\n\-+'
+        main_content_mask = r'(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}.' \
+                            r'\-+\n.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*' \
+                            r'\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*' \
+                            r'\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*\d{2}:\d{2}:\d{2}\.)'
+        full_mask = main_content_mask+full_mask_end
+
+        need_search = True
+        counter = 0
+        results_text_dict = {}
+
+        while need_search and counter < 100000:
+
+            counter += 1
+            m = re_search(full_mask, file_content)
+            found = ''
+            try:
+                found = m.group(1)[:-1]
+                results_text_dict[str(counter)+' результат'] = [found]
+                file_content = file_content.replace(found, '')
+            except:
+                print(f'Текст по шаблону <{full_mask}> - не найден!!!')
+                need_search = False
+            #print(found)
+
+        return results_text_dict, file_content
+
