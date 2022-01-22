@@ -142,19 +142,27 @@ class MyTestResultParser():
         counter = 0
         results_text_dict = {}
 
-        while need_search and counter < 100000:
+        while need_search and counter < 1000:
 
             counter += 1
             m = re_search(full_mask, file_content)
             found = ''
             try:
-                found = m.group(1)[:-1]
-                start_mark_censor = 'Маска ответов'
-                finish_mark_censor = '\nВремя начала:'
-                censored_text = ResultsExtractor(found).censor_text(start_mark_censor, finish_mark_censor)
-                results_text_dict[str(counter)+' результат'] = [found, censored_text]
-                file_content = file_content.replace(found, '')
-            except:
+                found = m.group(1)
+                my_extractor = ResultsExtractor(found)
+                censored_text = my_extractor.censor_text()
+                all_var_values = my_extractor.parse_text()
+                # ключ для словаря на выход -
+                # время тестирования + ФИО тестируемого!!!
+                key_time = found[:20]
+                # необходимо добавить проверку - является ли найденная строка датой и временем?!
+                key_student_fio = all_var_values['student_fio'][0]
+                full_key = key_time + '-||-' + key_student_fio
+                results_text_dict[full_key] = [found, censored_text]
+                # добавляем найденные значения переменных в лист (значение по текущему ключу!!!)
+                [results_text_dict[full_key].append(all_var_values[key][0]) for key in all_var_values]
+                file_content = file_content.replace(found, '') #удаление из исходного НАЙДЕННОГО текста
+            except AttributeError:
                 print(f'Текст по шаблону <{full_mask}> - не найден!!!')
                 need_search = False
             #print(found)
