@@ -2,9 +2,11 @@ from ParserModule import MyTestResultParser
 from DateCheckerFile import DateChecker
 from pandas import DataFrame
 import os
-#from VariableValuesMarks import all_variables_marks
 
+#from VariableValuesMarks import all_variables_marks
 #print(all_variables_marks['PC_name'][1])
+
+
 
 # тестируем класс MyTestResultParser
 

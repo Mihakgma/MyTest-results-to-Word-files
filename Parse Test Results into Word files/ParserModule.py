@@ -1,6 +1,5 @@
 import os.path
 from re import search as re_search
-
 from ExtractorFile import ResultsExtractor
 
 
@@ -131,11 +130,11 @@ class MyTestResultParser():
 
         #print(file_content)
 
-        full_mask_end = r'\n\-+'
+        full_mask_end = r'\n'
         main_content_mask = r'(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}.' \
                             r'\-+\n.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*' \
                             r'\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*' \
-                            r'\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*\d{2}:\d{2}:\d{2}\.)'
+                            r'\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*\d{2}:\d{2}:\d{2}\.\n\-+)'
         full_mask = main_content_mask+full_mask_end
 
         need_search = True
@@ -154,10 +153,10 @@ class MyTestResultParser():
                 all_var_values = my_extractor.parse_text()
                 # ключ для словаря на выход -
                 # время тестирования + ФИО тестируемого!!!
-                key_time = found[:20]
+                key_time = found[:20].strip()
                 # необходимо добавить проверку - является ли найденная строка датой и временем?!
                 key_student_fio = all_var_values['student_fio'][0]
-                full_key = key_time + '-||-' + key_student_fio
+                full_key = key_time + '{-}' + key_student_fio
                 results_text_dict[full_key] = [found, censored_text]
                 # добавляем найденные значения переменных в лист (значение по текущему ключу!!!)
                 [results_text_dict[full_key].append(all_var_values[key][0]) for key in all_var_values]

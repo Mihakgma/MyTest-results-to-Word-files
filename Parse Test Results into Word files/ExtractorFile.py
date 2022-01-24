@@ -1,5 +1,5 @@
 from VariableValuesMarks import all_variables_marks
-from DateCheckerFile import DateChecker
+#from DateCheckerFile import DateChecker
 
 
 
@@ -17,12 +17,21 @@ class ResultsExtractor():
         :return: его и возвращает в виде строки
         """
         text = self.get_text()
-        start = 'Маска ответов'
-        finish = 'Время начала:'
-        indexFoundStart = text.find(start)
-        indexFoundFinish = text.find(finish)
-        remove_substring = text[indexFoundStart:indexFoundFinish]
-        return text.replace(remove_substring, '')
+        # 1-ый участок для удаления
+        startFirst = 'Маска ответов'
+        finishFirst = 'Время начала:'
+        indexFoundStartFirst = text.find(startFirst)
+        indexFoundFinishFirst = text.find(finishFirst)
+        remove_substringFirst = text[indexFoundStartFirst:indexFoundFinishFirst]
+        # 2-ой участок для удаления
+        startSecond = 'Файл с тестом'
+        finishSecond = 'Всего заданий в тесте'
+        indexFoundStartSecond = text.find(startSecond)
+        indexFoundFinishSecond = text.find(finishSecond)
+        remove_substringSecond = text[indexFoundStartSecond:indexFoundFinishSecond]
+
+        return text.replace(remove_substringFirst, '')\
+                   .replace(remove_substringSecond, '')
 
 
     def parse_text(self):
