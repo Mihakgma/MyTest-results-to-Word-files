@@ -131,17 +131,17 @@ class MyTestResultParser():
         #print(file_content)
 
         full_mask_end = r'\n'
-        main_content_mask = r'(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}.' \
+        main_content_mask = r'(\-+ \d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}.' \
                             r'\-+\n.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*' \
                             r'\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*' \
                             r'\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*.*\n.*\d{2}:\d{2}:\d{2}\.\n\-+)'
-        full_mask = main_content_mask+full_mask_end
+        full_mask = main_content_mask + full_mask_end
 
         need_search = True
         counter = 0
         results_text_dict = {}
 
-        while need_search and counter < 1000:
+        while need_search and counter < 100000:
 
             counter += 1
             m = re_search(full_mask, file_content)
@@ -153,7 +153,7 @@ class MyTestResultParser():
                 all_var_values = my_extractor.parse_text()
                 # ключ для словаря на выход -
                 # время тестирования + ФИО тестируемого!!!
-                key_time = found[:20].strip()
+                key_time = found[10:30].strip()
                 # необходимо добавить проверку - является ли найденная строка датой и временем?!
                 key_student_fio = all_var_values['student_fio'][0]
                 full_key = key_time + '{-}' + key_student_fio
@@ -163,6 +163,7 @@ class MyTestResultParser():
                 file_content = file_content.replace(found, '') #удаление из исходного НАЙДЕННОГО текста
             except AttributeError:
                 print(f'Текст по шаблону <{full_mask}> - не найден!!!')
+                print('Процедура поиска шаблона в тексте прекращена!')
                 need_search = False
             #print(found)
 

@@ -17,13 +17,13 @@ class ResultsExtractor():
         :return: его и возвращает в виде строки
         """
         text = self.get_text()
-        # 1-ый участок для удаления
+        # 1-ая подстрока для удаления
         startFirst = 'Маска ответов'
         finishFirst = 'Время начала:'
         indexFoundStartFirst = text.find(startFirst)
         indexFoundFinishFirst = text.find(finishFirst)
         remove_substringFirst = text[indexFoundStartFirst:indexFoundFinishFirst]
-        # 2-ой участок для удаления
+        # 2-ая подстрока для удаления
         startSecond = 'Файл с тестом'
         finishSecond = 'Всего заданий в тесте'
         indexFoundStartSecond = text.find(startSecond)
@@ -43,6 +43,7 @@ class ResultsExtractor():
         """
         text = self.get_text()
         dict_to_fill = {
+            'test_time_stamp': [],
             'PC_name': [],
             'PC_username': [],
             'student_fio': [],
