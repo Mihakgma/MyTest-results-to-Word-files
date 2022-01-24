@@ -2,12 +2,13 @@ from ParserModule import MyTestResultParser
 from DateCheckerFile import DateChecker
 from pandas import DataFrame
 import os
+import docx
 
 #from VariableValuesMarks import all_variables_marks
 #print(all_variables_marks['PC_name'][1])
 
 
-
+previous_wd_path = os.getcwd()
 # тестируем класс MyTestResultParser
 
 # прерка корректности работы проверки формата файла для парсинга!!!
@@ -70,3 +71,67 @@ if excel_filename in fileLstCWD:
 else:
 
     print('Указанный эксель-файл НЕ БЫЛ СОХРАНЕН в текущую рабочую директорию!?')
+
+# пробник на создание директории на рабочем столе и поддиректорий с датами тестирования
+#today_date = dt.today().strftime('%d.%m.%Y')
+#
+desktop_path = str(os.environ['USERPROFILE'] + '\Desktop') + f'\\ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\\'
+
+def filename_purify(filename: str):
+    filename_purified = filename[:]
+
+    for elem in [
+        ':',
+        '/',
+        '\\',
+        '*',
+        '?',
+        '"',
+        '<',
+        '>',
+        '|'
+    ]:
+        filename_purified = filename_purified.replace(elem, '_')
+
+    return filename_purified
+
+#try:
+for colname in list(df_temp):
+    current_column_contents = df_temp[colname].to_list()
+    current_date = current_column_contents[2][:10]
+    date_result_current = DateChecker(date_to_check=current_date).check_date()
+    if date_result_current['date_ok']:
+        current_date_full = current_date + '\\'
+        try:
+            dir_fullpath = desktop_path+current_date_full
+            os.makedirs(dir_fullpath)
+        except:
+            print(f'Папка <ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\{current_date}> была создана ранее на Вашем рабочем столе!')
+        current_censored_result = current_column_contents[1]
+
+        os.chdir(dir_fullpath)
+
+        # txt-file
+        #txt_filename = colname + '.txt'
+        #f = open(filename_purify(txt_filename), 'w+')
+        #f.write(current_censored_result)
+        #f.close()
+
+        # docx-file
+        os.chdir(previous_wd_path)
+        doc = docx.Document('пустой шаблон.docx')
+        row = 0
+        for paragraph in doc.paragraphs:
+            if row == 0:
+                paragraph.add_run(current_censored_result)
+            row += 1
+
+        os.chdir(dir_fullpath)
+        doc.save(f'{filename_purify(colname)}.docx')
+
+#except:
+#    print('Папка с названием ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST была ранее создана на Вашем рабочем столе!')
+# возврат в изначальную рабочую директорию!!!
+os.chdir(previous_wd_path)
+
+input()

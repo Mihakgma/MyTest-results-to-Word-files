@@ -75,6 +75,8 @@ class ResultsExtractor():
             indexFoundFinish = text.find(finish)
             start_len = len(start)
             var_value = text[indexFoundStart+start_len:indexFoundFinish]
+            if var_name == 'student_fio':
+                var_value = var_value.upper()
             dict_to_fill[var_name].append(var_value)
 
         return dict_to_fill
