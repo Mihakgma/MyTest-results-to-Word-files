@@ -40,7 +40,11 @@ for date in test_dates_lst:
     print(result_date_check)
 
 # пробуем подгружать файл с результатами тестирования из MyTest!!!
-file_full_path = r'D:\ФБУЗ_ЦГиЭКО\ТЕСТЫ_ОГВиА\MyTestSavePythonApplication\файл для парсинга\MyTestStudent_Result 19.01.2022.txt'
+#file_full_path = r'D:\ФБУЗ_ЦГиЭКО\ТЕСТЫ_ОГВиА\MyTestSavePythonApplication\файл для парсинга\MyTestStudent_Result 19.01.2022.txt'
+# пробник с помощью относительного пути - путь прописан НЕПРАВИЛЬНО!!!
+#file_full_path = '.\\файл для парсинга\\MyTestStudent_Result 19.01.2022.txt'
+# помещаем файл в рабочую директориею
+file_full_path = 'MyTestStudent_Result 19.01.2022.txt'
 
 print(file_full_path)
 testObjRealPath = MyTestResultParser(file_full_path, file_full_path)

@@ -128,6 +128,8 @@ class MyTestResultParser():
         elif regime == 'manual':
             file_content = str_parse[:]
 
+        file_content = file_content.replace('выполненых', 'выполненных')
+
         #print(file_content)
 
         full_mask_end = r'\n'
