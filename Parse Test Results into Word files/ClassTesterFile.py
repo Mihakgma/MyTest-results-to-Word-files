@@ -43,8 +43,9 @@ for date in test_dates_lst:
 #file_full_path = r'D:\ФБУЗ_ЦГиЭКО\ТЕСТЫ_ОГВиА\MyTestSavePythonApplication\файл для парсинга\MyTestStudent_Result 19.01.2022.txt'
 # пробник с помощью относительного пути - путь прописан НЕПРАВИЛЬНО!!!
 #file_full_path = '.\\файл для парсинга\\MyTestStudent_Result 19.01.2022.txt'
-# помещаем файл в рабочую директориею
-file_full_path = 'MyTestStudent_Result 19.01.2022.txt'
+# помещаем файл в рабочую директорию (папку)
+# ДОБАВИТЬ ВОЗМОЖНОСТЬ ВЫБОРА ФАЙЛА, НО ИЗ ДАННОЙ ПАПКИ!!!
+file_full_path = '.\\папка для результатов тестирования\\MyTestStudent_Result 19.01.2022.txt'
 
 print(file_full_path)
 testObjRealPath = MyTestResultParser(file_full_path, file_full_path)
@@ -79,7 +80,7 @@ else:
 # пробник на создание директории на рабочем столе и поддиректорий с датами тестирования
 #today_date = dt.today().strftime('%d.%m.%Y')
 #
-desktop_path = str(os.environ['USERPROFILE'] + '\Desktop') + f'\\ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\\'
+desktop_import_dir_path = str(os.environ['USERPROFILE'] + '\Desktop') + f'\\ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\\'
 
 def filename_purify(filename: str):
     filename_purified = filename[:]
@@ -100,6 +101,7 @@ def filename_purify(filename: str):
     return filename_purified
 
 #try:
+new_files_list = '' # сюда будут добавляться вновь добавленные файлы
 for colname in list(df_temp):
     current_column_contents = df_temp[colname].to_list()
     current_date = current_column_contents[2][:10]
@@ -107,7 +109,7 @@ for colname in list(df_temp):
     if date_result_current['date_ok']:
         current_date_full = current_date + '\\'
         try:
-            dir_fullpath = desktop_path+current_date_full
+            dir_fullpath = desktop_import_dir_path + current_date_full
             os.makedirs(dir_fullpath)
         except:
             print(f'Папка <ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\{current_date}> была создана ранее на Вашем рабочем столе!')
@@ -123,7 +125,7 @@ for colname in list(df_temp):
 
         # docx-file
         os.chdir(previous_wd_path)
-        doc = docx.Document('пустой шаблон.docx')
+        doc = docx.Document('.\\шаблон docx-файла\\пустой шаблон.docx')
         row = 0
         for paragraph in doc.paragraphs:
             if row == 0:
@@ -131,11 +133,24 @@ for colname in list(df_temp):
             row += 1
 
         os.chdir(dir_fullpath)
-        doc.save(f'{filename_purify(colname)}.docx')
+        docx_filename = f'{filename_purify(colname)}.docx'
+        doc.save(docx_filename)
+        new_files_list += dir_fullpath + docx_filename + '\n'
+
+# меняем рабочую директорию на корневую папку с выгрузкой
+os.chdir(desktop_import_dir_path)
+date_obj = DateChecker('')
+today_str = date_obj.get_today_date()
+txt_results_filename = f'Новые_файлы_с_результатами_в_текущей_директории_({today_str})' + '.txt'
+txt_file = open(txt_results_filename, 'w+')
+txt_file.write(new_files_list) # записываем в файл строку с результатами
+txt_file.close()
+
+
 
 #except:
 #    print('Папка с названием ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST была ранее создана на Вашем рабочем столе!')
 # возврат в изначальную рабочую директорию!!!
-os.chdir(previous_wd_path)
+#os.chdir(previous_wd_path)
 
 input()
