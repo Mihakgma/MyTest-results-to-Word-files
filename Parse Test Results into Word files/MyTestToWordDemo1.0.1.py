@@ -75,6 +75,32 @@ def save_df_excel(df, dir_path, today_str: str):
     excel_filename = f'test_output_MyTestProgramSliced_{today_str}.xlsx'
     # ТРАНСПОНИРУЕМ ФРЕЙМ ДАННЫХ!!!
     df = df.T
+    df.columns = [
+        'текст весь',
+        'текст цензурированный',
+        'время окончания теста',
+        'имя ПК',
+        'имя пользователя',
+        'ФИО',
+        'Название теста',
+        'Расположение файла с тестом',
+        'CRC файла',
+        'всего заданий в тесте',
+        'выполнено заданий',
+        'из них правильно',
+        'из них ошибок',
+        'результатоивность',
+        'использовано подсказок',
+        'набрано баллов',
+        'оценка',
+        'маска результата',
+        'маска времени обдумывания (в секундах)',
+        'маска ответов',
+        'маска штрафов за подсказку',
+        'время начала',
+        'время завершения',
+        'продолжительность'
+    ]
     df.to_excel(dir_path+excel_filename, index=True)
     filelist_cwd = os.listdir(dir_path)
     if excel_filename in filelist_cwd:
@@ -134,13 +160,17 @@ for colname in list(df_temp):
     current_column_contents = df_temp[colname].to_list()
     current_date = current_column_contents[2][:10]
     date_result_current = DateChecker(date_to_check=current_date).check_date()
+    current_year = str(date_result_current['year_num'])
+    current_month = date_result_current['month_str'][:3]
+    current_month_num = str(date_result_current['month_num'])
     if date_result_current['date_ok']:
-        current_date_full = current_date + '\\'
+        current_date_full = '\\'+current_year+'\\'+current_month_num+'-'+current_month+'-'+current_year+'\\'+current_date+'\\'
         try:
             dir_fullpath = desktop_import_dir_path + current_date_full
             os.makedirs(dir_fullpath)
         except:
-            print(f'Папка <ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\{current_date}> была создана ранее на Вашем рабочем столе!')
+            print(f'Папка <ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\{current_date_full[1:]}> '
+                  f'была создана ранее на Вашем рабочем столе!')
         current_censored_result = current_column_contents[1]
 
         os.chdir(dir_fullpath)
