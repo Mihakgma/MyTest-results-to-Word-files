@@ -16,7 +16,7 @@ previous_wd_path = os.getcwd()
 # ФУНКЦИИ
 ############################
 def select_filename_to_parse():
-    """"
+    """
     Функция выбора наименования файла для
     извлечения результатов тестирования
     """
@@ -51,7 +51,7 @@ def select_filename_to_parse():
 
 
 def filename_purify(filename: str):
-    """"
+    """
     Очищает строку для наименования файла
     от недопустимых символов
     """
@@ -116,7 +116,7 @@ def get_today_with_time_str():
 
 
 def file_in_directory(filename: str, dir_path: str):
-    """"
+    """
     Проверяет находится ли файл с указанным
     названием в директории с указанным путем.
     Возвращает:

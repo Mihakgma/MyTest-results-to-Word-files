@@ -41,7 +41,7 @@ class MyTestResultParser():
         return self.__file_exists
 
     def get_all_attributes(self):
-        """"
+        """
         Возвращает все атрибуты объекта класса MyTestResultParser
         в виде словаря, где ключом является строка с именем переменной,
         а значением - ее значение
@@ -61,7 +61,7 @@ class MyTestResultParser():
 
     # рабочие методы - а точнее, их конвейр...
     def check_file_exists(self):
-        """"
+        """
         Проверить - существует ли файл?
         Да -> 'yes'
         Нет -> 'no'
@@ -89,7 +89,7 @@ class MyTestResultParser():
         return out_text, format_ok
 
     def read_file(self):
-        """"
+        """
         Проверяет формат и существование файла.
         Если все ок - возвращает содержимое файла в формате строки
         """
