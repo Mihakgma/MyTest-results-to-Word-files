@@ -147,6 +147,11 @@ df_temp = DataFrame(slice_results[0])
 # пробник на создание директории на рабочем столе и поддиректорий с датами тестирования
 
 desktop_import_dir_path = str(os.environ['USERPROFILE'] + '\Desktop') + f'\\ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\\'
+
+# проверяем была ли ранее создана папка на рабочем столе с данным именем
+if not(os.path.exists(desktop_import_dir_path)):
+    os.makedirs(desktop_import_dir_path)
+
 # сохраняем результаты в директорию с выгрузкой
 today_str = filename_purify(get_today_with_time_str())
 save_df_excel(df_temp, desktop_import_dir_path, today_str)

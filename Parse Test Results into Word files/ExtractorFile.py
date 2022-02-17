@@ -2,7 +2,6 @@ from VariableValuesMarks import all_variables_marks
 #from DateCheckerFile import DateChecker
 
 
-
 class ResultsExtractor():
     def __init__(self, text: str):
         self.__text = text
