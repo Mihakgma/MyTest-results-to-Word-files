@@ -1,5 +1,6 @@
 from VariableValuesMarks import all_variables_marks
-#from DateCheckerFile import DateChecker
+# from tqdm import tqdm
+# from DateCheckerFile import DateChecker
 
 
 class ResultsExtractor():
@@ -67,7 +68,7 @@ class ResultsExtractor():
         }
 
         for var_name in dict_to_fill:
-            print(all_variables_marks[var_name][1])
+            # print(all_variables_marks[var_name][1])
             start = all_variables_marks[var_name][1]
             finish = all_variables_marks[var_name][2]
             indexFoundStart = text.find(start)

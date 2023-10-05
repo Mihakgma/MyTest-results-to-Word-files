@@ -1,7 +1,8 @@
 import os.path
 from re import search as re_search
 from ExtractorFile import ResultsExtractor
-
+from tqdm import tqdm
+from sys import getsizeof as sys_getsizeof
 
 
 class MyTestResultParser():
@@ -111,7 +112,7 @@ class MyTestResultParser():
             print('Проверьте путь к файлу!')
         return file_content
 
-    def content_slicer(self, regime='auto', str_parse = ''):
+    def content_slicer(self, regime='auto', str_parse=''):
         """
         Данный метод 'разрезает' строку с содержимым
         файла результатов тестирования из программы My Test
@@ -123,14 +124,14 @@ class MyTestResultParser():
         Все, что отделено черточками...
         2) остаточный текст, в котором не найден искомый шаблон
         """
-        if regime =='auto':
+        if regime == 'auto':
             file_content = self.read_file()
         elif regime == 'manual':
             file_content = str_parse[:]
 
         file_content = file_content.replace('выполненых', 'выполненных')
 
-        #print(file_content)
+        # print(file_content)
 
         full_mask_end = r'\n'
         main_content_mask = r'(\-+ \d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}.' \
@@ -142,12 +143,24 @@ class MyTestResultParser():
         need_search = True
         counter = 0
         results_text_dict = {}
+        txt_file_name = 'results_dict_size.txt'
+        with open(txt_file_name, 'w') as f:
+            f.write('Dict physical size log!')
+        max_counter_size = 10000
 
-        while need_search and counter < 100000:
-
+        for i in tqdm(range(max_counter_size)):
+            dict_size_bytes = sys_getsizeof(results_text_dict)
+            with open(txt_file_name, 'a') as f:
+                f.write(f'\n{dict_size_bytes}')
             counter += 1
+            if counter == int(max_counter_size / 2):
+                answer = input('Для прекращения процедуры введите x|X ')
+                if 'x' in answer.lower().strip() or 'х' in answer.lower().strip():
+                    need_search = False
+            # print(len(file_content))
+            # print(counter)
             m = re_search(full_mask, file_content)
-            found = ''
+            # found = ''
             try:
                 found = m.group(1)
                 my_extractor = ResultsExtractor(found)
@@ -162,11 +175,15 @@ class MyTestResultParser():
                 results_text_dict[full_key] = [found, censored_text]
                 # добавляем найденные значения переменных в лист (значение по текущему ключу!!!)
                 [results_text_dict[full_key].append(all_var_values[key][0]) for key in all_var_values]
-                file_content = file_content.replace(found, '') #удаление из исходного НАЙДЕННОГО текста
+                file_content = file_content.replace(found, '')  # удаление из исходного НАЙДЕННОГО текста
             except AttributeError:
                 print(f'Текст по шаблону <{full_mask}> - не найден!!!')
                 print('Процедура поиска шаблона в тексте прекращена!')
                 need_search = False
-            #print(found)
+            except:
+                print(f'error on <{counter}>-th iteration occurred!')
+            # print(found)
+            if need_search == False:
+                break
 
         return results_text_dict, file_content
