@@ -1,6 +1,7 @@
 from ParserModule import MyTestResultParser
 from DateCheckerFile import DateChecker
 from pandas import DataFrame
+from pandas import concat as pd_concat
 import os
 import docx
 
@@ -139,7 +140,18 @@ def main():
     # слайсер содержимого файла
     slice_results = testObjRealPath.content_slicer()
     # сохраняем результаты тестирования в виде эксель-файла!
-    df_temp = DataFrame(slice_results[0])
+    counter = 0
+    for dict_current in slice_results[0]:
+        counter += 1
+        df_current = DataFrame(dict_current)
+        # 1-ый ДФ берется за основу, к которому затем добавляются остальные по колонкам (т.е. вниз)
+        if counter == 1:
+            df_temp = df_current.copy()
+        else:
+            df_list = []
+            df_list.append(df_temp)
+            df_list.append(df_current)
+            df_temp = pd_concat(df_list, axis=1)
     #print(df_temp.head())
     # пробник на создание директории на рабочем столе и поддиректорий с датами тестирования
 
@@ -171,8 +183,9 @@ def main():
                 dir_fullpath = desktop_import_dir_path + current_date_full
                 os.makedirs(dir_fullpath)
             except:
-                print(f'Папка <ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\{current_date_full[1:]}> '
-                      f'была создана ранее на Вашем рабочем столе!')
+                pass
+                # print(f'Папка <ВЫГРУЗКА_РЕЗУЛЬТАТОВ_ИЗ_MY_TEST\{current_date_full[1:]}> '
+                #      f'была создана ранее на Вашем рабочем столе!')
             current_censored_result = current_column_contents[1]
 
             os.chdir(dir_fullpath)

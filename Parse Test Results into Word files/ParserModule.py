@@ -143,14 +143,21 @@ class MyTestResultParser():
         need_search = True
         counter = 0
         results_text_dict = {}
-        txt_file_name = 'results_dict_size.txt'
-        with open(txt_file_name, 'w') as f:
+        result_dicts_lst = []
+        txt_filename_dict_size = 'results_dict_size.txt'
+        txt_filename_results = 'student_results_processed.txt'
+
+        with open(txt_filename_dict_size, 'w') as f:
             f.write('Dict physical size log!')
+
+        with open(txt_filename_results, 'w') as f:
+            f.write('Students results processed during this session log!')
+
         max_counter_size = 10000
 
         for i in tqdm(range(max_counter_size)):
             dict_size_bytes = sys_getsizeof(results_text_dict)
-            with open(txt_file_name, 'a') as f:
+            with open(txt_filename_dict_size, 'a') as f:
                 f.write(f'\n{dict_size_bytes}')
             counter += 1
             if counter == int(max_counter_size / 2):
@@ -172,18 +179,29 @@ class MyTestResultParser():
                 # необходимо добавить проверку - является ли найденная строка датой и временем?!
                 key_student_fio = all_var_values['student_fio'][0]
                 full_key = key_time + '{-}' + key_student_fio
+                # сохраняем в лог спарсенных результатов
+                with open(txt_filename_results, 'a') as f:
+                    f.write(f'\n{full_key}')
                 results_text_dict[full_key] = [found, censored_text]
                 # добавляем найденные значения переменных в лист (значение по текущему ключу!!!)
                 [results_text_dict[full_key].append(all_var_values[key][0]) for key in all_var_values]
                 file_content = file_content.replace(found, '')  # удаление из исходного НАЙДЕННОГО текста
+                # размер словаря достиг максимально допустимого
+                # добавляем сформированный словарь в список и обнуляем данный словарь
+                if dict_size_bytes >= 4696:
+                    result_dicts_lst.append(results_text_dict)
+                    results_text_dict = {}
             except AttributeError:
-                print(f'Текст по шаблону <{full_mask}> - не найден!!!')
+                print('Текст по заданному шаблону - не найден!!!')
                 print('Процедура поиска шаблона в тексте прекращена!')
                 need_search = False
+                # последняя итерация по поиску шаблона в тексте
+                result_dicts_lst.append(results_text_dict)
             except:
                 print(f'error on <{counter}>-th iteration occurred!')
             # print(found)
             if need_search == False:
                 break
-
-        return results_text_dict, file_content
+        print(all_var_values)
+        print(f'Общее количество итераций составило: <{counter}>')
+        return result_dicts_lst, file_content
